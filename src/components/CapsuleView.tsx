@@ -27,6 +27,7 @@ import {
   addGuestbookEntry,
   incrementOpenedCount 
 } from '../lib/db';
+import { auth } from '../firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 
@@ -254,6 +255,11 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
 
   const t = TRANSLATIONS[lang];
 
+  const getVaultPasscodeCacheKey = (capsuleId: string) => {
+    const currentUserId = auth.currentUser?.uid || 'guest';
+    return `vault_passcode_${capsuleId}_${currentUserId}`;
+  };
+
   // Load Capsule details
   useEffect(() => {
     async function loadData() {
@@ -267,8 +273,8 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
             setIsFormUnlocked(true);
             setIsTimeUnlocked(true);
           } else {
-            // Check if passcode matches any cached session
-            const cachedCode = localStorage.getItem(`vault_passcode_${capsuleId}`);
+            // Check if passcode matches any cached session for this user
+            const cachedCode = localStorage.getItem(getVaultPasscodeCacheKey(capsuleId));
             if (cachedCode === docRef.accessCode) {
               setIsFormUnlocked(true);
               incrementOpenedCount(docRef.id, docRef.openedCount);
@@ -431,7 +437,7 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
     if (formattedCode === capsule.accessCode) {
       setIsFormUnlocked(true);
       setLockError("");
-      localStorage.setItem(`vault_passcode_${capsule.id}`, capsule.accessCode);
+      localStorage.setItem(getVaultPasscodeCacheKey(capsule.id), capsule.accessCode);
       incrementOpenedCount(capsule.id, capsule.openedCount);
     } else {
       setLockError("Passcode invalid. Please check your invitation card or consult the creator!");

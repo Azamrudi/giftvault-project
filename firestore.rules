@@ -98,7 +98,9 @@ service cloud.firestore {
 
     // MATCH 2: Birthday Pages
     match /birthdayPages/{pageId} {
-      allow get: if isValidId(pageId);
+      allow get: if isValidId(pageId)
+        && (resource.data.visibility in ['public', 'semi-private']
+          || (isSignedIn() && resource.data.creatorUid == request.auth.uid));
       
       // Allow public or semi-private pages to be listed by anyone,
       // and allow creators to list their own pages.
