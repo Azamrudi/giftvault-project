@@ -33,14 +33,6 @@ service cloud.firestore {
       return isSignedIn() && get(/databases/$(database)/documents/birthdayPages/$(pageId)).data.creatorUid == request.auth.uid;
     }
 
-    function isCreatorUidQuery() {
-      return isSignedIn() && request.query.where('creatorUid', '==', request.auth.uid);
-    }
-
-    function isPublicVisibilityQuery() {
-      return request.query.where('visibility', 'in', ['public', 'semi-private']);
-    }
-
     // Validation Blueprint: User profiles
     function isValidUser(data) {
       return data.uid is string && data.uid.size() <= 128
@@ -108,8 +100,10 @@ service cloud.firestore {
     match /birthdayPages/{pageId} {
       allow get: if isValidId(pageId);
       
-      // Relational query-safe list access
-      allow list: if isPublicVisibilityQuery() || isCreatorUidQuery();
+      // Allow public or semi-private pages to be listed by anyone,
+      // and allow creators to list their own pages.
+      allow list: if resource.data.visibility in ['public', 'semi-private']
+        || (isSignedIn() && resource.data.creatorUid == request.auth.uid);
       
       allow create: if isSignedIn() && isValidId(pageId) && isValidPage(request.resource.data)
         && request.resource.data.creatorUid == request.auth.uid
