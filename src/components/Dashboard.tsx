@@ -429,11 +429,14 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
 
       const unlockDateTimeUTC = localTarget.toISOString();
 
+      const creatorName = (user.displayName || "Anonymous Creator").trim();
+      const creatorEmail = (user.email || "").trim();
+
       const newPage: BirthdayPage = {
         id: randomId,
         creatorUid: user.uid,
-        creatorEmail: user.email,
-        creatorName: user.displayName,
+        creatorEmail,
+        creatorName,
         recipientName,
         birthdayDate,
         unlockDateTimeUTC,
