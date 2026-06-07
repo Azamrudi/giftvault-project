@@ -30,7 +30,7 @@ export async function testFirestoreConnection() {
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
   const path = `users/${profile.uid}`;
   try {
-    await setDoc(doc(db, 'users', profile.uid), profile, { merge: true });
+    await setDoc(doc(db, 'users', profile.uid), profile);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
   }
@@ -40,8 +40,7 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
 export async function createBirthdayPage(page: BirthdayPage): Promise<void> {
   const path = `birthdayPages/${page.id}`;
   try {
-    const serializablePage = JSON.parse(JSON.stringify(page));
-    await setDoc(doc(db, 'birthdayPages', page.id), serializablePage);
+    await setDoc(doc(db, 'birthdayPages', page.id), page);
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, path);
   }
