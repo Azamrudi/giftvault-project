@@ -98,8 +98,11 @@ service cloud.firestore {
     match /birthdayPages/{pageId} {
       allow get: if isValidId(pageId);
       
-      // Relational securely constrained query enforcement
-      allow list: if resource.data.visibility in ['public', 'semi-private'] || (isSignedIn() && resource.data.creatorUid == request.auth.uid);
+      // Relational query enforcement: allow public/semi-private list requests,
+      // or authenticated owners to list their own capsules by creatorUid.
+      allow list: if
+        request.query.where('visibility', 'in', ['public', 'semi-private']) ||
+        (isSignedIn() && request.query.where('creatorUid', '==', request.auth.uid));
       
       allow create: if isSignedIn() && isValidId(pageId) && isValidPage(request.resource.data)
         && request.resource.data.creatorUid == request.auth.uid;
