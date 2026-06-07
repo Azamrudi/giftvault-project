@@ -30,7 +30,7 @@ export async function testFirestoreConnection() {
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
   const path = `users/${profile.uid}`;
   try {
-    await setDoc(doc(db, 'users', profile.uid), profile);
+    await setDoc(doc(db, 'users', profile.uid), profile, { merge: true });
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
   }
