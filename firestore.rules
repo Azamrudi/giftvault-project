@@ -1,9 +1,149 @@
-# GEMINI_API_KEY: Required for Gemini AI API calls.
-# AI Studio automatically injects this at runtime from user secrets.
-# Users configure this via the Secrets panel in the AI Studio UI.
-GEMINI_API_KEY="MY_GEMINI_API_KEY"
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-# APP_URL: The URL where this applet is hosted.
-# AI Studio automatically injects this at runtime with the Cloud Run service URL.
-# Used for self-referential links, OAuth callbacks, and API endpoints.
-APP_URL="MY_APP_URL"
+    // Reusable global security helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Gated Admin function
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'azamrudi@gmail.com' || 
+        request.auth.token.email == 'azamxvoid@gmail.com'
+      ) && request.auth.token.email_verified == true;
+    }
+
+    // Global Admin/Safety Gate
+    // If the user is the authenticated admin, they bypass and can read/write everything.
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isPageCreator(pageId) {
+      return isSignedIn() && get(/databases/$(database)/documents/birthdayPages/$(pageId)).data.creatorUid == request.auth.uid;
+    }
+
+    // Validation Blueprint: User profiles
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() <= 128
+        && data.displayName is string && data.displayName.size() <= 100
+        && data.email is string && data.email.size() <= 150
+        && data.createdAt is string && data.createdAt.size() <= 40
+        && (!data.keys().hasAny(['photoURL']) || (data.photoURL is string && data.photoURL.size() <= 2000));
+    }
+
+    // Validation Blueprint: Birthday Page (Gift Capsule)
+    function isValidPage(data) {
+      return data.keys().hasAll([
+        'id', 'creatorUid', 'creatorEmail', 'creatorName', 
+        'recipientName', 'birthdayDate', 'unlockDateTimeUTC', 
+        'accessCode', 'visibility', 'theme', 'title', 'message', 
+        'createdAt', 'openedCount'
+      ])
+      && data.id is string && data.id.size() <= 128
+      && data.creatorUid is string && data.creatorUid.size() <= 128
+      && data.creatorEmail is string && data.creatorEmail.size() <= 150
+      && data.creatorName is string && data.creatorName.size() <= 100
+      && data.recipientName is string && data.recipientName.size() <= 100
+      && data.birthdayDate is string && data.birthdayDate.size() <= 20
+      && data.unlockDateTimeUTC is string && data.unlockDateTimeUTC.size() <= 40
+      && data.accessCode is string && data.accessCode.size() <= 50
+      && data.visibility in ['public', 'semi-private', 'private']
+      && data.theme is string && data.theme.size() <= 50
+      && data.title is string && data.title.size() <= 200
+      && data.message is string && data.message.size() <= 20000
+      && data.createdAt is string && data.createdAt.size() <= 40
+      && data.openedCount is int
+      && (!data.keys().hasAny(['lastOpened']) || (data.lastOpened is string && data.lastOpened.size() <= 40));
+    }
+
+    // Validation Blueprint: Friend memory contributions
+    function isValidFriendContribution(data) {
+      return data.keys().hasAll(['id', 'pageId', 'author', 'content', 'createdAt'])
+        && data.id is string && data.id.size() <= 128
+        && data.pageId is string && data.pageId.size() <= 128
+        && data.author is string && data.author.size() <= 100
+        && data.content is string && data.content.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() <= 40;
+    }
+
+    // Validation Blueprint: Guestbook entries (unlocked)
+    function isValidGuestbookEntry(data) {
+      return data.keys().hasAll(['id', 'pageId', 'author', 'message', 'createdAt'])
+        && data.id is string && data.id.size() <= 128
+        && data.pageId is string && data.pageId.size() <= 128
+        && data.author is string && data.author.size() <= 100
+        && data.message is string && data.message.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() <= 40;
+    }
+
+    // MATCH 1: User Profiles
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(userId) && isValidUser(request.resource.data);
+      allow delete: if false;
+    }
+
+    // MATCH 2: Birthday Pages
+    match /birthdayPages/{pageId} {
+      allow get: if isValidId(pageId);
+      
+      // Relational securely constrained query enforcement
+      allow list: if resource.data.visibility in ['public', 'semi-private'] || (isSignedIn() && resource.data.creatorUid == request.auth.uid);
+      
+      allow create: if isSignedIn() && isValidId(pageId) && isValidPage(request.resource.data)
+        && request.resource.data.creatorUid == request.auth.uid;
+      
+      allow update: if isValidId(pageId) && (
+        // Action 1: Creator updates their own capsule
+        (
+          isSignedIn() 
+          && isOwner(resource.data.creatorUid) 
+          && isValidPage(request.resource.data)
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.creatorUid == resource.data.creatorUid
+          && request.resource.data.creatorEmail == resource.data.creatorEmail
+          && request.resource.data.creatorName == resource.data.creatorName
+          && request.resource.data.createdAt == resource.data.createdAt
+        ) ||
+        // Action 2: Public user / visitor increments hit counter atomically
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['openedCount', 'lastOpened'])
+          && request.resource.data.openedCount == resource.data.openedCount + 1
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.creatorUid == resource.data.creatorUid
+        )
+      );
+      
+      allow delete: if isSignedIn() && isValidId(pageId) && isOwner(resource.data.creatorUid);
+    }
+
+    // MATCH 3: Friend Contributions
+    match /friendContributions/{contributionId} {
+      allow get: if isValidId(contributionId);
+      allow list: if resource.data.pageId is string;
+      allow create: if isValidId(contributionId) && isValidFriendContribution(request.resource.data)
+        && exists(/databases/$(database)/documents/birthdayPages/$(request.resource.data.pageId));
+      allow update, delete: if isSignedIn() && isPageCreator(resource.data.pageId);
+    }
+
+    // MATCH 4: Guestbook Entries
+    match /guestbook/{guestbookId} {
+      allow get: if isValidId(guestbookId);
+      allow list: if resource.data.pageId is string;
+      allow create: if isValidId(guestbookId) && isValidGuestbookEntry(request.resource.data)
+        && exists(/databases/$(database)/documents/birthdayPages/$(request.resource.data.pageId));
+      allow update, delete: if isSignedIn() && isPageCreator(resource.data.pageId);
+    }
+  }
+}

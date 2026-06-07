@@ -1,182 +1,149 @@
-import { 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  collection, 
-  getDocs, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  getDocFromServer 
-} from 'firebase/firestore';
-import { db, OperationType, handleFirestoreError } from '../firebase';
-import { UserProfile, BirthdayPage, FriendContribution, GuestbookEntry } from '../types';
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-// Connection validator - called at initialization to confirm backend status
-export async function testFirestoreConnection() {
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('offline')) {
-      console.error("Please check your Firestore database configuration.");
+    // Reusable global security helpers
+    function isSignedIn() {
+      return request.auth != null;
     }
-  }
-}
 
-// 1. User Profile CRUD
-export async function saveUserProfile(profile: UserProfile): Promise<void> {
-  const path = `users/${profile.uid}`;
-  try {
-    await setDoc(doc(db, 'users', profile.uid), profile);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
-  }
-}
+    // Gated Admin function
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'azamrudi@gmail.com' || 
+        request.auth.token.email == 'azamxvoid@gmail.com'
+      ) && request.auth.token.email_verified == true;
+    }
 
-// 2. Birthday Pages CRUD
-export async function createBirthdayPage(page: BirthdayPage): Promise<void> {
-  const path = `birthdayPages/${page.id}`;
-  try {
-    await setDoc(doc(db, 'birthdayPages', page.id), page);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.CREATE, path);
-  }
-}
+    // Global Admin/Safety Gate
+    // If the user is the authenticated admin, they bypass and can read/write everything.
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
 
-export async function getBirthdayPage(id: string): Promise<BirthdayPage | null> {
-  const path = `birthdayPages/${id}`;
-  try {
-    const docRef = doc(db, 'birthdayPages', id);
-    const snap = await getDoc(docRef);
-    if (!snap.exists()) return null;
-    return snap.data() as BirthdayPage;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.GET, path);
-  }
-}
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
 
-export async function updateBirthdayPage(page: BirthdayPage): Promise<void> {
-  const path = `birthdayPages/${page.id}`;
-  try {
-    await setDoc(doc(db, 'birthdayPages', page.id), page);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.UPDATE, path);
-  }
-}
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
 
-export async function incrementOpenedCount(id: string, currentCount: number): Promise<void> {
-  const path = `birthdayPages/${id}`;
-  try {
-    await updateDoc(doc(db, 'birthdayPages', id), {
-      openedCount: currentCount + 1,
-      lastOpened: new Date().toISOString()
-    });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.UPDATE, path);
-  }
-}
+    function isPageCreator(pageId) {
+      return isSignedIn() && get(/databases/$(database)/documents/birthdayPages/$(pageId)).data.creatorUid == request.auth.uid;
+    }
 
-export async function deleteBirthdayPageDocument(id: string): Promise<void> {
-  const path = `birthdayPages/${id}`;
-  try {
-    await deleteDoc(doc(db, 'birthdayPages', id));
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
-  }
-}
+    // Validation Blueprint: User profiles
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() <= 128
+        && data.displayName is string && data.displayName.size() <= 100
+        && data.email is string && data.email.size() <= 150
+        && data.createdAt is string && data.createdAt.size() <= 40
+        && (!data.keys().hasAny(['photoURL']) || (data.photoURL is string && data.photoURL.size() <= 2000));
+    }
 
-export async function getCreatorBirthdayPages(uid: string): Promise<BirthdayPage[]> {
-  const path = 'birthdayPages';
-  try {
-    const q = query(
-      collection(db, 'birthdayPages'),
-      where('creatorUid', '==', uid)
-    );
-    const snap = await getDocs(q);
-    const results: BirthdayPage[] = [];
-    snap.forEach((d) => {
-      results.push(d.data() as BirthdayPage);
-    });
-    return results;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
-  }
-}
+    // Validation Blueprint: Birthday Page (Gift Capsule)
+    function isValidPage(data) {
+      return data.keys().hasAll([
+        'id', 'creatorUid', 'creatorEmail', 'creatorName', 
+        'recipientName', 'birthdayDate', 'unlockDateTimeUTC', 
+        'accessCode', 'visibility', 'theme', 'title', 'message', 
+        'createdAt', 'openedCount'
+      ])
+      && data.id is string && data.id.size() <= 128
+      && data.creatorUid is string && data.creatorUid.size() <= 128
+      && data.creatorEmail is string && data.creatorEmail.size() <= 150
+      && data.creatorName is string && data.creatorName.size() <= 100
+      && data.recipientName is string && data.recipientName.size() <= 100
+      && data.birthdayDate is string && data.birthdayDate.size() <= 20
+      && data.unlockDateTimeUTC is string && data.unlockDateTimeUTC.size() <= 40
+      && data.accessCode is string && data.accessCode.size() <= 50
+      && data.visibility in ['public', 'semi-private', 'private']
+      && data.theme is string && data.theme.size() <= 50
+      && data.title is string && data.title.size() <= 200
+      && data.message is string && data.message.size() <= 20000
+      && data.createdAt is string && data.createdAt.size() <= 40
+      && data.openedCount is int
+      && (!data.keys().hasAny(['lastOpened']) || (data.lastOpened is string && data.lastOpened.size() <= 40));
+    }
 
-export async function getAllPublicBirthdayPages(): Promise<BirthdayPage[]> {
-  const path = 'birthdayPages';
-  try {
-    const q = query(
-      collection(db, 'birthdayPages'),
-      where('visibility', 'in', ['public', 'semi-private']),
-      limit(50)
-    );
-    const snap = await getDocs(q);
-    const results: BirthdayPage[] = [];
-    snap.forEach((d) => {
-      results.push(d.data() as BirthdayPage);
-    });
-    return results;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
-  }
-}
+    // Validation Blueprint: Friend memory contributions
+    function isValidFriendContribution(data) {
+      return data.keys().hasAll(['id', 'pageId', 'author', 'content', 'createdAt'])
+        && data.id is string && data.id.size() <= 128
+        && data.pageId is string && data.pageId.size() <= 128
+        && data.author is string && data.author.size() <= 100
+        && data.content is string && data.content.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() <= 40;
+    }
 
-// 3. Friend Contributions (memories added before birthday)
-export async function getFriendContributions(pageId: string): Promise<FriendContribution[]> {
-  const path = 'friendContributions';
-  try {
-    const q = query(
-      collection(db, 'friendContributions'),
-      where('pageId', '==', pageId)
-    );
-    const snap = await getDocs(q);
-    const results: FriendContribution[] = [];
-    snap.forEach((d) => {
-      results.push(d.data() as FriendContribution);
-    });
-    return results.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
-  }
-}
+    // Validation Blueprint: Guestbook entries (unlocked)
+    function isValidGuestbookEntry(data) {
+      return data.keys().hasAll(['id', 'pageId', 'author', 'message', 'createdAt'])
+        && data.id is string && data.id.size() <= 128
+        && data.pageId is string && data.pageId.size() <= 128
+        && data.author is string && data.author.size() <= 100
+        && data.message is string && data.message.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() <= 40;
+    }
 
-export async function addFriendContribution(contribution: FriendContribution): Promise<void> {
-  const path = `friendContributions/${contribution.id}`;
-  try {
-    await setDoc(doc(db, 'friendContributions', contribution.id), contribution);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.CREATE, path);
-  }
-}
+    // MATCH 1: User Profiles
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(userId) && isValidUser(request.resource.data);
+      allow delete: if false;
+    }
 
-// 4. Guestbook Entries (unlocked greetings added post birthday)
-export async function getGuestbookEntries(pageId: string): Promise<GuestbookEntry[]> {
-  const path = 'guestbook';
-  try {
-    const q = query(
-      collection(db, 'guestbook'),
-      where('pageId', '==', pageId)
-    );
-    const snap = await getDocs(q);
-    const results: GuestbookEntry[] = [];
-    snap.forEach((d) => {
-      results.push(d.data() as GuestbookEntry);
-    });
-    return results.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
-  }
-}
+    // MATCH 2: Birthday Pages
+    match /birthdayPages/{pageId} {
+      allow get: if isValidId(pageId);
+      
+      // Relational securely constrained query enforcement
+      allow list: if resource.data.visibility in ['public', 'semi-private'] || (isSignedIn() && resource.data.creatorUid == request.auth.uid);
+      
+      allow create: if isSignedIn() && isValidId(pageId) && isValidPage(request.resource.data)
+        && request.resource.data.creatorUid == request.auth.uid;
+      
+      allow update: if isValidId(pageId) && (
+        // Action 1: Creator updates their own capsule
+        (
+          isSignedIn() 
+          && isOwner(resource.data.creatorUid) 
+          && isValidPage(request.resource.data)
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.creatorUid == resource.data.creatorUid
+          && request.resource.data.creatorEmail == resource.data.creatorEmail
+          && request.resource.data.creatorName == resource.data.creatorName
+          && request.resource.data.createdAt == resource.data.createdAt
+        ) ||
+        // Action 2: Public user / visitor increments hit counter atomically
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['openedCount', 'lastOpened'])
+          && request.resource.data.openedCount == resource.data.openedCount + 1
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.creatorUid == resource.data.creatorUid
+        )
+      );
+      
+      allow delete: if isSignedIn() && isValidId(pageId) && isOwner(resource.data.creatorUid);
+    }
 
-export async function addGuestbookEntry(entry: GuestbookEntry): Promise<void> {
-  const path = `guestbook/${entry.id}`;
-  try {
-    await setDoc(doc(db, 'guestbook', entry.id), entry);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.CREATE, path);
+    // MATCH 3: Friend Contributions
+    match /friendContributions/{contributionId} {
+      allow get: if isValidId(contributionId);
+      allow list: if resource.data.pageId is string;
+      allow create: if isValidId(contributionId) && isValidFriendContribution(request.resource.data)
+        && exists(/databases/$(database)/documents/birthdayPages/$(request.resource.data.pageId));
+      allow update, delete: if isSignedIn() && isPageCreator(resource.data.pageId);
+    }
+
+    // MATCH 4: Guestbook Entries
+    match /guestbook/{guestbookId} {
+      allow get: if isValidId(guestbookId);
+      allow list: if resource.data.pageId is string;
+      allow create: if isValidId(guestbookId) && isValidGuestbookEntry(request.resource.data)
+        && exists(/databases/$(database)/documents/birthdayPages/$(request.resource.data.pageId));
+      allow update, delete: if isSignedIn() && isPageCreator(resource.data.pageId);
+    }
   }
 }
