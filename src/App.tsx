@@ -7,7 +7,7 @@ import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import CapsuleView from './components/CapsuleView';
 import { motion, AnimatePresence } from 'motion/react';
-import { Gift, LogIn, LogOut, LayoutDashboard, Globe, Compass, Grid, Sun, Moon } from 'lucide-react';
+import { Gift, LogIn, LogOut, LayoutDashboard, Globe, Compass, Grid } from 'lucide-react';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -15,12 +15,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'dashboard'>('home');
   const [activeVaultId, setActiveVaultId] = useState<string | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    const stored = localStorage.getItem('giftvault_theme');
-    if (stored === 'light' || stored === 'dark') return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
   
   // Language selector state: 'en' (English) or 'id' (Indonesian)
   const [lang, setLang] = useState<'en' | 'id'>(() => {
@@ -32,30 +26,6 @@ export default function App() {
     setLang(next);
     localStorage.setItem('giftvault_lang', next);
   };
-
-  const toggleThemeMode = () => {
-    setThemeMode((current) => (current === 'light' ? 'dark' : 'light'));
-  };
-
-  useEffect(() => {
-    localStorage.setItem('giftvault_theme', themeMode);
-    document.documentElement.classList.toggle('light', themeMode === 'light');
-    document.documentElement.classList.toggle('dark', themeMode === 'dark');
-  }, [themeMode]);
-
-  const isLightMode = themeMode === 'light';
-  const appShellClass = isLightMode
-    ? 'min-h-screen bg-slate-50 text-slate-950 flex flex-col justify-between font-sans selection:bg-slate-300/30 selection:text-slate-950'
-    : 'min-h-screen bg-[#050505] text-[#E0DCD5] flex flex-col justify-between font-sans selection:bg-[#D4AF37]/30 selection:text-white';
-  const headerClass = isLightMode
-    ? 'bg-white/90 text-slate-950 border-b border-slate-200/60'
-    : 'bg-[#0B0B0B]/90 text-[#E0DCD5] border-b border-white/10';
-  const headerButtonClass = isLightMode
-    ? 'bg-slate-100 border border-slate-200 text-slate-900 hover:bg-slate-200'
-    : 'bg-[#121212] border border-white/10 text-[#E0DCD5] hover:bg-[#1C1C1C]';
-  const footerClass = isLightMode
-    ? 'bg-slate-100 text-slate-700 border-t border-slate-200'
-    : 'bg-[#0B0B0B] text-[#E0DCD5]/60 border-t border-white/10';
 
   // Parse URL parameter on initial load for direct time-capsule link shares
   useEffect(() => {
@@ -146,7 +116,7 @@ export default function App() {
   // Display Capsule directly if a share link is loaded
   if (activeVaultId) {
     return (
-      <div className={isLightMode ? 'min-h-screen bg-slate-50 text-slate-950' : 'min-h-screen bg-[#050505] text-[#E0DCD5]'} data-theme={themeMode}>
+      <div className="min-h-screen bg-[#050505] text-[#E0DCD5]">
         <CapsuleView 
           capsuleId={activeVaultId} 
           onBackToHome={handleBackToHome} 
@@ -158,9 +128,9 @@ export default function App() {
   }
 
   return (
-    <div className={appShellClass} data-theme={themeMode}>
+    <div className="min-h-screen bg-[#050505] text-[#E0DCD5] flex flex-col justify-between font-sans selection:bg-[#D4AF37]/30 selection:text-white">
       {/* Top Header Panel */}
-      <header className={`${headerClass} backdrop-blur-md sticky top-0 z-40`}>
+      <header className="bg-[#0B0B0B]/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center h-16">
           <div 
             onClick={handleBackToHome}
@@ -174,23 +144,15 @@ export default function App() {
 
           <div className="flex items-center gap-4">
             <button
-              onClick={toggleThemeMode}
-              className={`${headerButtonClass} text-xs px-3 py-1.5 rounded-full font-semibold flex items-center gap-1.5 transition-colors cursor-pointer`}
-              title={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
-            >
-              {isLightMode ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
-              <span>{isLightMode ? 'Dark' : 'Light'}</span>
-            </button>
-            <button
               onClick={toggleLang}
-              className={`${headerButtonClass} text-xs px-3 py-1.5 rounded-full font-semibold flex items-center gap-1.5 transition-colors cursor-pointer`}
+              className="bg-[#121212] border border-white/10 hover:bg-[#1C1C1C] text-[#E0DCD5] text-xs px-3 py-1.5 rounded-full font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title={lang === "en" ? "Switch to Indonesian" : "Ubah ke Bahasa Inggris"}
             >
               <Globe className="w-3.5 h-3.5 text-[#D4AF37]" />
               <span>{lang === "en" ? "EN" : "ID"}</span>
             </button>
 
-            <nav className={`hidden sm:flex items-center gap-1.5 p-1 rounded-full ${isLightMode ? 'bg-slate-100 border border-slate-200/60' : 'bg-[#121212] border border-white/5'}`}>
+            <nav className="hidden sm:flex items-center gap-1.5 bg-[#121212] p-1 rounded-full border border-white/5">
               <button
                 onClick={() => setActiveTab('home')}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
@@ -300,7 +262,6 @@ export default function App() {
                 onNavigateToDashboard={() => setActiveTab('dashboard')} 
                 onSelectCapsule={handleSelectCapsule}
                 lang={lang}
-                themeMode={themeMode}
               />
             </motion.div>
           ) : (
@@ -320,7 +281,6 @@ export default function App() {
                   }} 
                   onSelectCapsule={handleSelectCapsule}
                   lang={lang}
-                  themeMode={themeMode}
                 />
               </motion.div>
             )
@@ -329,7 +289,7 @@ export default function App() {
       </main>
 
       {/* Persistent App Footer */}
-      <footer className={`${footerClass} py-10 mt-auto text-center`}>
+      <footer className="bg-[#0B0B0B] text-[#E0DCD5]/60 py-10 mt-auto text-center border-t border-white/10">
         <p className="text-xs font-serif font-semibold tracking-widest text-[#D4AF37] uppercase italic">GIFTVAULT — SECURED TIME CAPSULES © 2026</p>
         <p className="text-[10px] text-[#E0DCD5]/40 mt-2 max-w-sm mx-auto px-4 leading-relaxed font-sans">
           Lock surprises, anniversary gifts, digital greeting cards, and birthday present folders. Released automatically in perfect luxury custom templates.

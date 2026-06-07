@@ -10,7 +10,6 @@ interface HomeProps {
   onNavigateToDashboard: () => void;
   onSelectCapsule: (id: string) => void;
   lang?: 'en' | 'id';
-  themeMode?: 'light' | 'dark';
 }
 
 const TEXTS = {
@@ -70,25 +69,13 @@ const TEXTS = {
   }
 };
 
-export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCapsule, lang = 'en', themeMode = 'dark' }: HomeProps) {
+export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCapsule, lang = 'en' }: HomeProps) {
   const [publicCapsules, setPublicCapsules] = useState<BirthdayPage[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   const [loading, setLoading] = useState(true);
 
   const t = TEXTS[lang];
-  const isLight = themeMode === 'light';
-  const pageBg = isLight ? 'bg-slate-50 text-slate-950' : 'bg-[#050505] text-[#E0DCD5]';
-  const sectionBg = isLight ? 'bg-white/90 border border-slate-200/70 text-slate-950 shadow-sm' : 'bg-[#0B0B0B] border border-white/5 text-[#E0DCD5]';
-  const cardBg = isLight ? 'bg-white/95 border border-slate-200/70 text-slate-950 shadow-sm' : 'bg-[#0F0F0F]/90 border border-white/10 text-[#E0DCD5]';
-  const surfaceText = isLight ? 'text-slate-700' : 'text-[#E0DCD5]/75';
-  const mutedText = isLight ? 'text-slate-600' : 'text-[#E0DCD5]/60';
-  const badgeClass = isLight ? 'bg-slate-100 border-slate-300 text-slate-700' : 'bg-[#D4AF37]/5 border border-[#D4AF37]/20 text-[#D4AF37]';
-  const primaryBtn = isLight ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_8px_30px_rgba(15,23,42,0.12)]' : 'bg-gradient-to-r from-[#D4AF37] to-[#8E6E2D] text-black shadow-[0_4px_30px_rgba(214,175,55,0.15)]';
-  const secondaryBtn = isLight ? 'bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200' : 'bg-[#121212]/40 text-[#E0DCD5] border border-white/10 hover:bg-white/5';
-  const monthBtnActive = isLight ? 'bg-slate-900 text-white uppercase tracking-wider font-bold shadow-md shadow-slate-900/20' : 'bg-gradient-to-r from-[#D4AF37] to-[#8E6E2D] text-black uppercase tracking-wider font-bold shadow-md shadow-yellow-950/20';
-  const monthBtn = isLight ? 'bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200' : 'bg-[#0D0D0D] text-[#E0DCD5]/70 border border-white/10 hover:bg-white/5';
-  const searchBar = isLight ? 'bg-slate-100/95 border border-slate-200/70 text-slate-900' : 'bg-[#111111]/90 border border-white/10 text-[#E0DCD5]';
 
   useEffect(() => {
     async function loadWall() {
@@ -128,7 +115,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
   const todaysBirthdays = publicCapsules.filter(c => c.birthdayDate.substring(5, 10) === todayStr);
 
   return (
-    <div className={`${pageBg} min-h-screen relative overflow-hidden font-sans`}>
+    <div className="bg-[#050505] text-[#E0DCD5] min-h-screen relative overflow-hidden font-sans">
       {/* Glowing luxury backdrop lights */}
       <div className="absolute top-0 left-1/4 w-[450px] h-[450px] bg-[#D4AF37]/5 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-[#8E6E2D]/5 rounded-full blur-[140px] pointer-events-none -z-10" />
@@ -139,7 +126,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className={`inline-flex items-center gap-2 ${badgeClass} px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 shadow-sm`}
+          className="inline-flex items-center gap-2 bg-[#D4AF37]/5 border border-[#D4AF37]/20 text-[#D4AF37] px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 shadow-sm shadow-yellow-950/20"
         >
           <Gift className="w-3.5 h-3.5 text-[#D4AF37]" />
           <span>{t.badge}</span>
@@ -149,7 +136,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className={`text-4xl md:text-6xl font-serif tracking-tight leading-tight ${isLight ? 'text-slate-950' : 'text-white'}`}
+          className="text-4xl md:text-6xl font-serif text-white tracking-tight leading-tight"
         >
           {t.title1} <br />
           <span className="bg-gradient-to-r from-white via-[#E0DCD5] to-[#D4AF37] bg-clip-text text-transparent italic font-light">
@@ -161,7 +148,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className={`mt-6 text-base ${mutedText} max-w-2xl mx-auto leading-relaxed font-light font-sans`}
+          className="mt-6 text-base text-[#E0DCD5]/75 max-w-2xl mx-auto leading-relaxed font-light font-sans"
         >
           {t.desc}
         </motion.p>
@@ -175,7 +162,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
           {user ? (
             <button
               onClick={onNavigateToDashboard}
-              className={`${primaryBtn} hover:scale-[1.02] active:scale-[0.98] font-semibold px-8 py-3.5 rounded-full transition-all text-sm flex items-center justify-center gap-2 cursor-pointer`}
+              className="bg-gradient-to-r from-[#D4AF37] to-[#8E6E2D] hover:scale-[1.02] active:scale-[0.98] text-black font-semibold px-8 py-3.5 rounded-full shadow-[0_4px_30px_rgba(214,175,55,0.15)] transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
               id="hero-go-dashboard"
             >
               <Sparkles className="w-4 h-4" />
@@ -184,7 +171,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
           ) : (
             <button
               onClick={onSignIn}
-              className={`${primaryBtn} hover:scale-[1.02] active:scale-[0.98] font-semibold px-8 py-3.5 rounded-full transition-all text-sm flex items-center justify-center gap-2 cursor-pointer`}
+              className="bg-gradient-to-r from-[#D4AF37] to-[#8E6E2D] hover:scale-[1.02] active:scale-[0.98] text-black font-semibold px-8 py-3.5 rounded-full shadow-[0_4px_30px_rgba(214,175,55,0.15)] transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
               id="hero-auth-btn"
             >
               <LogIn className="w-4 h-4" />
@@ -202,7 +189,7 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
       </section>
 
       {/* Features Overview */}
-      <section className={`py-16 ${sectionBg} backdrop-blur-sm relative z-20`}>
+      <section className="py-16 bg-[#0B0B0B] border-y border-white/5 backdrop-blur-sm relative z-20">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="flex flex-col items-center text-center p-4">
             <div className="w-12 h-12 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5 flex items-center justify-center text-[#D4AF37] mb-4 shadow-sm shadow-yellow-950/20">
@@ -243,10 +230,10 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
         <section className="py-16 max-w-5xl mx-auto px-4 relative z-20">
           <div className="bg-gradient-to-r from-[#D4AF37]/45 via-amber-700/10 to-[#8E6E2D]/45 rounded-3xl p-[1px] shadow-[0_10px_50px_rgba(214,175,55,0.05)]">
             <div className="bg-[#0B0B0B] rounded-[22px] p-8 text-center border border-white/5">
-              <h2 className={`text-2xl font-serif italic ${isLight ? 'text-slate-900' : 'text-[#D4AF37]'} flex items-center justify-center gap-2 mb-2`}>
+              <h2 className="text-2xl font-serif italic text-[#D4AF37] flex items-center justify-center gap-2 mb-2">
                 {t.celebrateToday}
               </h2>
-              <p className={` ${mutedText} text-sm mb-6 max-w-md mx-auto`}>
+              <p className="text-[#E0DCD5]/60 text-sm mb-6 max-w-md mx-auto">
                 {t.celebrateDesc}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -274,11 +261,11 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
       {/* Birthday Wall & Interactive Calendar Section */}
       <section id="interactive-wall" className="py-20 max-w-5xl mx-auto px-4 relative z-20 border-t border-white/5 mt-12">
         <div className="text-center mb-12">
-          <h2 className={`text-3xl font-serif italic ${isLight ? 'text-slate-950' : 'text-white'} tracking-wide flex items-center justify-center gap-3`}>
+          <h2 className="text-3xl font-serif italic text-white tracking-wide flex items-center justify-center gap-3">
             <Calendar className="w-7 h-7 text-[#D4AF37]" />
             {t.wallTitle}
           </h2>
-          <p className={`mt-3 ${mutedText} text-sm max-w-xl mx-auto font-light`}>
+          <p className="mt-3 text-[#E0DCD5]/60 text-sm max-w-xl mx-auto font-light">
             {t.wallDesc}
           </p>
         </div>
@@ -291,8 +278,8 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
               onClick={() => setSelectedMonth(idx)}
               className={`flex-none px-4 py-2 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 selectedMonth === idx 
-                  ? monthBtnActive 
-                  : monthBtn
+                  ? "bg-gradient-to-r from-[#D4AF37] to-[#8E6E2D] hover:scale-[1.01] text-black uppercase tracking-wider font-bold shadow-md shadow-yellow-950/20" 
+                  : "bg-[#0D0D0D] text-[#E0DCD5]/70 border border-white/10 hover:bg-white/5"
               }`}
             >
               {month}
@@ -301,14 +288,14 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
         </div>
 
         {/* Search Bar */}
-        <div className={`mt-8 flex gap-3 max-w-md mx-auto rounded-full py-2.5 pl-5 pr-2.5 ${searchBar} shadow-inner focus-within:border-[#D4AF37]/45 transition-colors`}>
+        <div className="mt-8 flex gap-3 max-w-md mx-auto border border-white/10 rounded-full py-2.5 pl-5 pr-2.5 bg-[#111111]/90 shadow-inner focus-within:border-[#D4AF37]/45 transition-colors">
           <Search className="text-[#D4AF37] w-5 h-5 self-center min-w-[20px]" />
           <input
             type="text"
             placeholder={t.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`w-full text-sm outline-none bg-transparent ${isLight ? 'text-slate-950 placeholder-slate-500' : 'text-[#E0DCD5] placeholder-[#E0DCD5]/30'}`}
+            className="w-full text-sm outline-none text-[#E0DCD5] placeholder-[#E0DCD5]/30 bg-transparent"
           />
         </div>
 
@@ -333,26 +320,26 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     onClick={() => onSelectCapsule(capsule.id)}
-                    className={`cursor-pointer group flex flex-col justify-between ${cardBg} hover:border-[#D4AF37]/40 rounded-2xl p-5 transition-all duration-300`}
+                    className="cursor-pointer group flex flex-col justify-between bg-[#0F0F0F]/90 border border-white/10 hover:border-[#D4AF37]/40 rounded-2xl p-5 shadow-sm hover:shadow-[0_8px_30px_rgba(214,175,55,0.05)] transition-all duration-300"
                   >
                     <div>
                       <div className="flex justify-between items-start gap-2">
                         <span className="text-[9px] font-bold uppercase bg-[#D4AF37]/10 text-[#D4AF37] px-2.5 py-1 rounded-full tracking-wider border border-[#D4AF37]/20">
                           {capsule.theme}
                         </span>
-                        <div className={`flex items-center text-[11px] ${isLight ? 'text-slate-700' : 'text-[#E0DCD5]'} font-semibold bg-white/5 border border-white/10 px-2.5 py-1 rounded-full`}>
+                        <div className="flex items-center text-[11px] text-[#E0DCD5] font-semibold bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
                           <Heart className="w-3 h-3 fill-rose-500 text-rose-500 mr-1" />
                           <span>{dateLabel}</span>
                         </div>
                       </div>
 
-                      <h3 className={`mt-4 text-lg font-serif ${isLight ? 'text-slate-950' : 'text-white'} tracking-wide group-hover:text-[#D4AF37] transition-colors`}>
+                      <h3 className="mt-4 text-lg font-serif text-white tracking-wide group-hover:text-[#D4AF37] transition-colors">
                         {capsule.visibility === 'semi-private' 
                           ? `${capsule.recipientName[0]}. ****`
                           : capsule.recipientName
                         }
                       </h3>
-                      <p className={`mt-2.5 text-xs ${mutedText} font-light italic leading-relaxed`}>
+                      <p className="mt-2.5 text-xs text-[#E0DCD5]/60 font-light italic leading-relaxed">
                         &ldquo;{capsule.title}&rdquo;
                       </p>
                     </div>
@@ -370,10 +357,10 @@ export default function Home({ onSignIn, user, onNavigateToDashboard, onSelectCa
               })}
             </div>
           ) : (
-            <div className={`text-center py-16 ${cardBg} rounded-2xl ${isLight ? 'border border-slate-200/70' : 'border border-white/5'} ${isLight ? 'text-slate-600' : 'text-[#E0DCD5]/60'}`}>
+            <div className="text-center py-16 bg-[#0E0E0E] border border-white/5 rounded-2xl text-[#E0DCD5]/60">
               <Gift className="w-10 h-10 stroke-[#D4AF37]/50 mx-auto opacity-55 mb-3" />
-              <h4 className={`font-serif italic ${isLight ? 'text-slate-950' : 'text-white'} text-md`}>{t.emptyTitle}</h4>
-              <p className={`text-xs mt-1.5 max-w-xs mx-auto ${isLight ? 'text-slate-600' : 'text-[#E0DCD5]/50'} leading-relaxed font-light`}>
+              <h4 className="font-serif italic text-white text-md">{t.emptyTitle}</h4>
+              <p className="text-xs mt-1.5 max-w-xs mx-auto text-[#E0DCD5]/50 leading-relaxed font-light">
                 {t.emptyDesc}
               </p>
             </div>

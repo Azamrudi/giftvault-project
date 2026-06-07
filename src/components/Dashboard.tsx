@@ -128,7 +128,6 @@ interface DashboardProps {
   };
   onSelectCapsule: (id: string, preview?: boolean) => void;
   lang?: 'en' | 'id';
-  themeMode?: 'light' | 'dark';
 }
 
 const TEXTS = {
@@ -250,22 +249,13 @@ const TEXTS = {
   }
 };
 
-export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMode = 'dark' }: DashboardProps) {
+export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: DashboardProps) {
   const [capsules, setCapsules] = useState<BirthdayPage[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const t = TEXTS[lang];
-  const isLight = themeMode === 'light';
-  const pageBg = isLight ? 'bg-slate-50 text-slate-950' : 'bg-[#050505] text-[#E0DCD5]';
-  const cardBg = isLight ? 'bg-white/95 border border-slate-200/70 text-slate-950 shadow-sm' : 'bg-[#0B0B0B] border border-white/5 text-[#E0DCD5] shadow-xl';
-  const inputBg = isLight ? 'bg-slate-100/95 border border-slate-200/70 text-slate-900 placeholder-slate-500' : 'bg-[#121212]/90 border border-white/10 text-[#E0DCD5] placeholder-[#E0DCD5]/50';
-  const selectBg = isLight ? 'bg-slate-100/95 border border-slate-200/70 text-slate-900' : 'bg-[#121212]/90 border border-white/10 text-[#E0DCD5]';
-  const mutedText = isLight ? 'text-slate-600' : 'text-[#E0DCD5]/60';
-  const headingText = isLight ? 'text-slate-950' : 'text-white';
-  const subtleBg = isLight ? 'bg-slate-100/95' : 'bg-[#121212]/90';
-  const sectionBorder = isLight ? 'border-slate-200/70' : 'border-white/5';
   
   // New Capsule Fields
   const [recipientName, setRecipientName] = useState("");
@@ -429,14 +419,11 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
 
       const unlockDateTimeUTC = localTarget.toISOString();
 
-      const creatorName = (user.displayName || "Anonymous Creator").trim();
-      const creatorEmail = (user.email || "").trim();
-
       const newPage: BirthdayPage = {
         id: randomId,
         creatorUid: user.uid,
-        creatorEmail,
-        creatorName,
+        creatorEmail: user.email,
+        creatorName: user.displayName,
         recipientName,
         birthdayDate,
         unlockDateTimeUTC,
@@ -469,8 +456,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
       await loadCapsules();
     } catch (err) {
       console.error("Error creating birthday page:", err);
-      const message = err instanceof Error ? err.message : String(err);
-      alert(`Database serialization error. Confirm authorization variables.\n\n${message}`);
+      alert("Database serialization error. Confirm authorization variables.");
     } finally {
       setFormSubmitting(false);
     }
@@ -498,14 +484,14 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
   }
 
   return (
-    <div className={`max-w-6xl mx-auto px-4 py-8 relative z-20 ${pageBg}`}>
+    <div className="max-w-6xl mx-auto px-4 py-8 relative z-20">
       {/* Header bar */}
-      <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b ${sectionBorder} pb-6 mb-8`}>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6 mb-8">
         <div>
-          <h1 className={`text-3xl font-serif ${headingText} tracking-tight flex items-center gap-2`}>
+          <h1 className="text-3xl font-serif text-white tracking-tight flex items-center gap-2">
             <span className="text-[#D4AF37] italic font-light">GiftVault</span> {lang === 'id' ? 'Kabinet' : 'Cabinets'}
           </h1>
-          <p className={`${mutedText} text-sm mt-1 font-light`}>
+          <p className="text-[#E0DCD5]/60 text-sm mt-1 font-light">
             {t.assemblyDesc}
           </p>
         </div>
@@ -530,11 +516,11 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`${cardBg} rounded-2xl p-6 mb-8 relative z-20`}
+          className="bg-[#0B0B0B] border border-white/5 rounded-2xl p-6 shadow-xl mb-8 relative z-20"
         >
-          <div className={`flex items-center gap-2 mb-4 border-b ${sectionBorder} pb-3`}>
+          <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-3">
             <Sparkles className="w-5 h-5 text-[#D4AF37]" />
-            <h2 className={`text-lg font-serif italic ${headingText} font-semibold`}>{t.formTitle}</h2>
+            <h2 className="text-lg font-serif italic text-white font-semibold">{t.formTitle}</h2>
           </div>
 
           <form onSubmit={handleCreate} className="space-y-6">
@@ -553,7 +539,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   placeholder="e.g. Sarah Johnson"
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
-                  className={`w-full ${inputBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-2.5 outline-none text-sm`}
+                  className="w-full bg-[#121212]/90 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-2.5 outline-none text-[#E0DCD5] text-sm"
                 />
               </div>
 
@@ -566,7 +552,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   <select
                     value={birthdayMonth}
                     onChange={(e) => setBirthdayMonth(e.target.value)}
-                    className={`w-full ${selectBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-xs font-mono cursor-pointer`}
+                    className="w-full bg-[#121212]/90 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-[#E0DCD5] text-xs font-mono cursor-pointer"
                   >
                     <option value="01">01 - {lang === 'id' ? 'Januari' : 'January'}</option>
                     <option value="02">02 - {lang === 'id' ? 'Februari' : 'February'}</option>
@@ -589,7 +575,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   <select
                     value={birthdayDay}
                     onChange={(e) => setBirthdayDay(e.target.value)}
-                    className={`w-full ${selectBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-xs font-mono cursor-pointer`}
+                    className="w-full bg-[#121212]/90 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-[#E0DCD5] text-xs font-mono cursor-pointer"
                   >
                     {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(day => (
                       <option key={day} value={day}>{day}</option>
@@ -610,7 +596,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   placeholder="e.g. SARAH2026"
                   value={accessCode}
                   onChange={(e) => setAccessCode(e.target.value)}
-                  className={`w-full ${inputBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-2.5 outline-none text-sm font-mono tracking-wider`}
+                  className="w-full bg-[#121212]/90 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-2.5 outline-none text-[#E0DCD5] text-sm font-mono tracking-wider"
                 />
               </div>
             </div>
@@ -624,13 +610,13 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                 <select
                   value={theme}
                   onChange={(e) => setTheme(e.target.value)}
-                  className={`w-full ${selectBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-sm`}
+                  className="w-full bg-[#121212]/95 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-[#E0DCD5] text-sm"
                 >
-                  <option value="minimalist" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{lang === 'id' ? 'Minimalis Klasik' : 'Classic Minimalist'}</option>
-                  <option value="galaxy" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{lang === 'id' ? 'Galaksi Tengah Malam (Biru)' : 'Midnight Galaxy'}</option>
-                  <option value="romantic" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{lang === 'id' ? 'Sunset Romantis (Hangat)' : 'Sunset Romantic'}</option>
-                  <option value="cute" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{lang === 'id' ? 'Warna Pastel Imut' : 'Pastel Cute'}</option>
-                  <option value="luxury" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{lang === 'id' ? 'Obsidian Emas Mewah' : 'Obsidian Gold'}</option>
+                  <option value="minimalist" className="bg-[#121212] text-[#E0DCD5]">{lang === 'id' ? 'Minimalis Klasik' : 'Classic Minimalist'}</option>
+                  <option value="galaxy" className="bg-[#121212] text-[#E0DCD5]">{lang === 'id' ? 'Galaksi Tengah Malam (Biru)' : 'Midnight Galaxy'}</option>
+                  <option value="romantic" className="bg-[#121212] text-[#E0DCD5]">{lang === 'id' ? 'Sunset Romantis (Hangat)' : 'Sunset Romantic'}</option>
+                  <option value="cute" className="bg-[#121212] text-[#E0DCD5]">{lang === 'id' ? 'Warna Pastel Imut' : 'Pastel Cute'}</option>
+                  <option value="luxury" className="bg-[#121212] text-[#E0DCD5]">{lang === 'id' ? 'Obsidian Emas Mewah' : 'Obsidian Gold'}</option>
                 </select>
               </div>
 
@@ -642,11 +628,11 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                 <select
                   value={visibility}
                   onChange={(e) => setVisibility(e.target.value as VisibilityType)}
-                  className={`w-full ${selectBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-sm`}
+                  className="w-full bg-[#121212]/95 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-3 outline-none text-[#E0DCD5] text-sm"
                 >
-                  <option value="public" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{t.public}</option>
-                  <option value="semi-private" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{t.semiPrivate}</option>
-                  <option value="private" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-[#E0DCD5]'}>{t.private}</option>
+                  <option value="public" className="bg-[#121212] text-[#E0DCD5]">{t.public}</option>
+                  <option value="semi-private" className="bg-[#121212] text-[#E0DCD5]">{t.semiPrivate}</option>
+                  <option value="private" className="bg-[#121212] text-[#E0DCD5]">{t.private}</option>
                 </select>
               </div>
 
@@ -661,7 +647,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   placeholder="e.g. Wishing you the goldest chapters!"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className={`w-full ${inputBg} focus:border-[#D4AF37]/50 rounded-xl px-4 py-2.5 outline-none text-sm`}
+                  className="w-full bg-[#121212]/90 border border-white/10 focus:border-[#D4AF37]/50 rounded-xl px-4 py-2.5 outline-none text-[#E0DCD5] text-sm"
                 />
               </div>
             </div>
@@ -683,7 +669,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
             </div>
 
             {/* Message Draft Assistant Panel */}
-            <div className={`rounded-2xl p-5 ${subtleBg} border ${sectionBorder}`}>
+            <div className="bg-[#0F0F0F] border border-white/10 rounded-2xl p-5">
               <div className="flex items-center gap-1.5 mb-3 text-[#D4AF37] font-bold text-xs uppercase tracking-wider font-mono">
                 <Sparkles className="w-4 h-4 text-[#D4AF37]" />
                 <span>{lang === 'id' ? 'Asisten Penyusunan Pesan (Opsional)' : 'Optional Message Draft Assistant'}</span>
@@ -702,13 +688,13 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   <select
                     value={vibe}
                     onChange={(e) => setVibe(e.target.value)}
-                    className={`w-full ${selectBg} rounded-lg px-3 py-1.5 text-xs`}
+                    className="w-full bg-[#121212]/90 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#E0DCD5]"
                   >
-                    <option value="funny" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Kocak & Jenaka' : 'Hilarious / Teasing'}</option>
-                    <option value="romantic" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Romantis & Penuh Kasih' : 'Highly Romantic & Devoted'}</option>
-                    <option value="sentimental" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Sentimental / Hangat' : 'Sentimental / Emotional'}</option>
-                    <option value="poetic" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Puitis & Bersajak Indah' : 'Cinematic & Poetic Verse'}</option>
-                    <option value="inspirational" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Inspirasional & Motivasi' : 'Inspirational Life Milestones'}</option>
+                    <option value="funny" className="bg-[#121212]">{lang === 'id' ? 'Kocak & Jenaka' : 'Hilarious / Teasing'}</option>
+                    <option value="romantic" className="bg-[#121212]">{lang === 'id' ? 'Romantis & Penuh Kasih' : 'Highly Romantic & Devoted'}</option>
+                    <option value="sentimental" className="bg-[#121212]">{lang === 'id' ? 'Sentimental / Hangat' : 'Sentimental / Emotional'}</option>
+                    <option value="poetic" className="bg-[#121212]">{lang === 'id' ? 'Puitis & Bersajak Indah' : 'Cinematic & Poetic Verse'}</option>
+                    <option value="inspirational" className="bg-[#121212]">{lang === 'id' ? 'Inspirasional & Motivasi' : 'Inspirational Life Milestones'}</option>
                   </select>
                 </div>
 
@@ -719,13 +705,13 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
                   <select
                     value={relationship}
                     onChange={(e) => setRelationship(e.target.value)}
-                    className={`w-full ${selectBg} rounded-lg px-3 py-1.5 text-xs`}
+                    className="w-full bg-[#121212]/90 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#E0DCD5]"
                   >
-                    <option value="best friend" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Teman Baik / Sahabat' : 'Best Friend'}</option>
-                    <option value="partner / spouse" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Pasangan Kekasih / Istri / Suami' : 'Partner / Spouse'}</option>
-                    <option value="sibling" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Saudara Kandung' : 'Sibling'}</option>
-                    <option value="parent" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Orang Tua' : 'Parent'}</option>
-                    <option value="colleague" className={isLight ? 'bg-slate-100 text-slate-900' : 'bg-[#121212]' }>{lang === 'id' ? 'Rekan Kerja' : 'Team Member / Colleague'}</option>
+                    <option value="best friend" className="bg-[#121212]">{lang === 'id' ? 'Teman Baik / Sahabat' : 'Best Friend'}</option>
+                    <option value="partner / spouse" className="bg-[#121212]">{lang === 'id' ? 'Pasangan Kekasih / Istri / Suami' : 'Partner / Spouse'}</option>
+                    <option value="sibling" className="bg-[#121212]">{lang === 'id' ? 'Saudara Kandung' : 'Sibling'}</option>
+                    <option value="parent" className="bg-[#121212]">{lang === 'id' ? 'Orang Tua' : 'Parent'}</option>
+                    <option value="colleague" className="bg-[#121212]">{lang === 'id' ? 'Rekan Kerja' : 'Team Member / Colleague'}</option>
                   </select>
                 </div>
 
