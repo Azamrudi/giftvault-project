@@ -57,9 +57,9 @@ export const ENVELOPE_THEME_STYLES: { [key: string]: {
     descColor: "text-indigo-200/85",
     decorations: (
       <>
-        <div className="absolute top-4 left-10 text-indigo-400 text-sm animate-bounce font-mono">✦</div>
-        <div className="absolute bottom-6 right-12 text-purple-300 text-lg animate-pulse font-mono">★</div>
-        <div className="absolute top-1/2 right-4 text-indigo-300 text-xs animate-bounce font-mono" style={{ animationDelay: '1s' }}>✦</div>
+        <div className="absolute top-4 left-10 w-2.5 h-2.5 rounded-full bg-indigo-400 opacity-70 animate-pulse" />
+        <div className="absolute bottom-6 right-12 w-3 h-3 rounded-full bg-purple-300 opacity-70 animate-bounce" />
+        <div className="absolute top-1/2 right-4 w-1.5 h-1.5 rounded-full bg-indigo-300 opacity-70 animate-pulse" style={{ animationDelay: '1s' }} />
         <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
           <div className="w-64 h-64 border border-indigo-400 rounded-full absolute -top-12 -left-12 animate-spin" style={{ animationDuration: '40s' }} />
         </div>
@@ -76,10 +76,10 @@ export const ENVELOPE_THEME_STYLES: { [key: string]: {
     descColor: "text-rose-100",
     decorations: (
       <>
-        <div className="absolute top-5 right-10 text-rose-200 text-lg animate-pulse">🌸</div>
-        <div className="absolute bottom-5 left-10 text-rose-200 text-lg animate-ping" style={{ animationDuration: '4s' }}>♥</div>
-        <div className="absolute top-1/2 left-4 text-rose-101 text-base animate-bounce">✿</div>
-        <div className="absolute bottom-12 right-6 text-rose-200 text-xs opacity-60">❥</div>
+        <div className="absolute top-5 right-10 w-3 h-3 rounded-full bg-rose-200 opacity-60 animate-pulse" />
+        <div className="absolute bottom-5 left-10 w-3 h-3 rounded-full bg-rose-200 opacity-55 animate-ping" style={{ animationDuration: '4s' }} />
+        <div className="absolute top-1/2 left-4 w-2 h-2 rounded-full bg-rose-100 opacity-60 animate-bounce" />
+        <div className="absolute bottom-12 right-6 w-1.5 h-1.5 rounded-full bg-rose-200 opacity-60" />
       </>
     )
   },
@@ -93,10 +93,10 @@ export const ENVELOPE_THEME_STYLES: { [key: string]: {
     descColor: "text-purple-800/85",
     decorations: (
       <>
-        <div className="absolute top-5 left-6 text-xl animate-pulse">✨</div>
-        <div className="absolute bottom-6 left-12 text-xl animate-bounce" style={{ animationDuration: '1.2s' }}>🧸</div>
-        <div className="absolute top-12 right-8 text-xl animate-bounce" style={{ animationDuration: '2.2s' }}>🍭</div>
-        <div className="absolute bottom-4 right-10 text-xl animate-spin" style={{ animationDuration: '10s' }}>⭐</div>
+        <div className="absolute top-5 left-6 w-3 h-3 rounded-full bg-white opacity-65 animate-pulse" />
+        <div className="absolute bottom-6 left-12 w-3 h-3 rounded-full bg-[#FBCFE8] opacity-70 animate-bounce" style={{ animationDuration: '1.2s' }} />
+        <div className="absolute top-12 right-8 w-3 h-3 rounded-full bg-[#C4B5FD] opacity-70 animate-bounce" style={{ animationDuration: '2.2s' }} />
+        <div className="absolute bottom-4 right-10 w-4 h-1 rounded-full bg-[#F9A8D4] opacity-70 animate-pulse" style={{ animationDuration: '10s' }} />
       </>
     )
   },
@@ -158,33 +158,33 @@ const TEXTS = {
     shareLink: "Share Link",
     copied: "Copied!",
     preview: "Preview",
-    unlocked: "Unlocked 🔓",
-    locked: "Time Locked 🔒",
+    unlocked: "Unlocked",
+    locked: "Time Locked",
     revealsOn: "Reveals On:",
     code: "Code:",
     views: "Views:",
-    aiTitle: "Gemini Present Writing Co-Pilot",
-    aiSubtitle: "Stuck on the perfect words? Let Gemini compose a dynamic personalized birthday toast.",
+    aiTitle: "Message Drafting Assistant",
+    aiSubtitle: "Need help finding the right words? Use the assistant to draft a thoughtful birthday note.",
     relationship: "Relationship",
-    vibe: "Vibe / Tone",
+    vibe: "Tone",
     extraDetails: "Anecdotes / Favorite memories / Inside jokes",
-    generateAiWish: "Generate AI Birthday Letter ✨",
+    generateAiWish: "Generate a Letter Draft",
     writingText: "Drafting text...",
     friend: "Friend",
     sibling: "Sibling / Family",
-    partner: "Romantic Partner",
+    partner: "Partner",
     parent: "Parent / Guardian",
     colleague: "Colleague",
     funny: "Humorous / Fun",
     sentimental: "Sentimental / Emotional",
     poetic: "Poetic / Artistic",
     formal: "Formal / Professional",
-    aiDetailsPlaceholder: "e.g. Loves matcha lattes, remember that time we got lost in Kyoto...",
-    livePreview: "Live Present Preview Sandbox",
-    previewEnvelope: "Interactive Envelope Cover",
-    previewLetter: "Unfolded Letter Card",
-    clickSeal: "Click the heart wax seal below to preview opening sequence",
-    clickToClose: "Fold/Close Letter",
+    aiDetailsPlaceholder: "e.g. loves matcha lattes, remember that time we got lost in Kyoto...",
+    livePreview: "Live Preview Sandbox",
+    previewEnvelope: "Envelope Preview",
+    previewLetter: "Letter Preview",
+    clickSeal: "Click the wax seal below to preview opening sequence",
+    clickToClose: "Fold / Close Letter",
     recipientPlaceholder: "Recipient Name",
     titleHeadlinePlaceholder: "Headline Title",
     messagePlaceholder: "Your custom greeting will render here in real-time as you compose your present letter..."
@@ -216,33 +216,33 @@ const TEXTS = {
     shareLink: "Salin Link",
     copied: "Tersalin!",
     preview: "Pratinjau",
-    unlocked: "Terbuka 🔓",
-    locked: "Terkunci 🔒",
+    unlocked: "Terbuka",
+    locked: "Terkunci",
     revealsOn: "Terbuka Pada:",
     code: "Sandi:",
     views: "Dilihat:",
-    aiTitle: "Co-Pilot Penulis Kado Gemini AI",
-    aiSubtitle: "Kesulitan menyusun kalimat puitis? Biarkan Gemini merancang surat ucapan selamat yang hangat.",
+    aiTitle: "Message Drafting Assistant",
+    aiSubtitle: "Kesulitan menyusun kalimat puitis? Gunakan asisten ini untuk merancang surat ucapan yang hangat.",
     relationship: "Hubungan",
-    vibe: "Gaya / Nada Bicara",
+    vibe: "Nada Bicara",
     extraDetails: "Kisah menarik / Kenangan berharga / Lelucon candaan",
-    generateAiWish: "Buat Surat Ulang Tahun dengan AI ✨",
+    generateAiWish: "Buat Draf Surat",
     writingText: "Menyusun surat...",
     friend: "Teman Terdekat",
     sibling: "Saudara / Keluarga",
-    partner: "Pasangan Kekasih",
+    partner: "Pasangan",
     parent: "Orang Tua / Wali",
     colleague: "Rekan Kerja",
     funny: "Lucu / Humoris",
     sentimental: "Sentimental / Emosional",
     poetic: "Puitis / Artistik",
     formal: "Formal / Profesional",
-    aiDetailsPlaceholder: "mis. Sangat suka matcha latte, ingatkan saat tersesat di Kyoto bersama...",
-    livePreview: "Kotak Sandbox Pratinjau Kado Langsung",
-    previewEnvelope: "Tampilan Sampul Amplop",
-    previewLetter: "Tampilan Surat Terbuka",
-    clickSeal: "Klik segel lilin hati di bawah untuk mencoba membuka surat",
-    clickToClose: "Tutup/Lipat Surat",
+    aiDetailsPlaceholder: "mis. sangat suka matcha latte, ingatkan saat tersesat di Kyoto bersama...",
+    livePreview: "Kotak Pratinjau Langsung",
+    previewEnvelope: "Pratinjau Sampul Amplop",
+    previewLetter: "Pratinjau Surat",
+    clickSeal: "Klik segel lilin di bawah untuk membuka surat",
+    clickToClose: "Tutup / Lipat Surat",
     recipientPlaceholder: "Nama Penerima",
     titleHeadlinePlaceholder: "Judul Ucapan",
     messagePlaceholder: "Pesan ucapan hangat Anda akan terurai di sini secara langsung saat Anda mulai mengetik..."
@@ -337,7 +337,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
     }
   }
   
-  // AI assistant states
+  // message assistant states
   const [relationship, setRelationship] = useState("friend");
   const [vibe, setVibe] = useState("funny");
   const [extraDetails, setExtraDetails] = useState("");
@@ -365,11 +365,11 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
     }
   }
 
-  // AI draft generator triggers
+  // draft generator triggers
   async function triggerAiDraft(e: React.MouseEvent) {
     e.preventDefault();
     if (!recipientName) {
-      setAiError("Please fill in the Recipient's Name first so Gemini knows who to address!");
+      setAiError("Please fill in the Recipient's Name first so the assistant can personalize the message.");
       return;
     }
     setAiError("");
@@ -385,7 +385,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
         setMessage(result.text);
       }
     } catch (err: any) {
-      setAiError(err?.message || "Failed to generate AI content. Ensure your local secrets include an active GEMINI_API_KEY.");
+      setAiError(err?.message || "Failed to generate content. Make sure your local integration is configured correctly.");
     } finally {
       setAiGenerating(false);
     }
@@ -663,21 +663,21 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
               />
               <label htmlFor="isAnonymousCheckbox" className="text-xs text-[#E0DCD5] font-semibold cursor-pointer select-none">
                 {lang === 'id' 
-                  ? 'Kirim sebagai Pengirim Misterius / Rahasia 🤫 (Sembunyikan nama asli Anda)' 
-                  : 'Send anonymously / Secret Presenter 🤫 (Hide your real name from the envelope & letter)'}
+                  ? 'Kirim secara anonim / rahasiakan identitas Anda (Sembunyikan nama asli Anda)' 
+                  : 'Send anonymously / hide your identity (Hide your real name from the envelope & letter)'}
               </label>
             </div>
 
-            {/* AI Greeting Assistant Panel */}
+            {/* Message Draft Assistant Panel */}
             <div className="bg-[#0F0F0F] border border-white/10 rounded-2xl p-5">
               <div className="flex items-center gap-1.5 mb-3 text-[#D4AF37] font-bold text-xs uppercase tracking-wider font-mono">
                 <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-                <span>{lang === 'id' ? 'Asisten Kreatif AI Gemini (Opsional)' : 'Optional Gemini Creative Assistant'}</span>
+                <span>{lang === 'id' ? 'Asisten Penyusunan Pesan (Opsional)' : 'Optional Message Draft Assistant'}</span>
               </div>
                <p className="text-[#E0DCD5]/55 text-xs mb-4 leading-relaxed font-light">
                 {lang === 'id' 
-                  ? 'Biarkan kecerdasan buatan menyusun surat puitis, puisi ulang tahun, atau lelucon hangat untuk langsung dipindahkan ke editor Anda di bawah.'
-                  : 'Let AI help you generate beautiful letters, birthday poems, funny notes, or inspiring messages that automatically sync to your editor below.'}
+                  ? 'Gunakan bantuan penulisan untuk menyusun surat, puisi ulang tahun, atau catatan hangat yang kemudian dimasukkan ke editor di bawah.'
+                  : 'Use the message assistant to draft letters, birthday notes, and thoughtful messages that sync directly into your editor below.'}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -731,7 +731,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
 
               {aiError && (
                 <p className="mt-3 text-rose-450 text-xs font-medium">
-                  ⚠️ {aiError}
+                  {lang === 'id' ? 'Catatan:' : 'Note:'} {aiError}
                 </p>
               )}
 
@@ -744,12 +744,12 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
                 {aiGenerating ? (
                   <>
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#D4AF37]" />
-                    <span>{lang === 'id' ? 'Gemini sedang menyusun draf indah...' : 'Gemini is composing custom verses...'}</span>
+                    <span>{lang === 'id' ? 'Sedang menyusun draf...' : 'Generating your draft...'}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>{lang === 'id' ? 'Buat Draf Surat dengan AI' : 'Generate AI Letter Draft'}</span>
+                    <span>{lang === 'id' ? 'Buat Draf Surat' : 'Generate Letter Draft'}</span>
                   </>
                 )}
               </button>
@@ -853,7 +853,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
                             {(ENVELOPE_THEME_STYLES[theme] || ENVELOPE_THEME_STYLES.minimalist).decorations}
 
                             <div className="absolute top-3 left-3 bg-black/25 backdrop-blur-sm border border-white/20 rounded-full px-2.5 py-0.5 text-[8px] uppercase font-bold tracking-widest text-white font-mono">
-                              {lang === 'id' ? 'SEGEL KADO 💌' : 'SECRET SEAL 💌'}
+                              {lang === 'id' ? 'SEGEL KADO' : 'SECRET SEAL'}
                             </div>
 
                             {/* Sealed heart wax indicator with theme colours */}
@@ -902,7 +902,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
                                   </span>
                                 </div>
                                 <div className="text-right text-[8px] opacity-65 font-mono leading-tight">
-                                  <div>{lang === 'id' ? 'Dari:' : 'From:'} {isAnonymous ? (lang === 'id' ? 'Pengirim Misterius 🤫' : 'Anonymous Sender 🤫') : user.displayName}</div>
+                                  <div>{lang === 'id' ? 'Dari:' : 'From:'} {isAnonymous ? (lang === 'id' ? 'Pengirim Misterius' : 'Anonymous Sender') : user.displayName}</div>
                                   <div>{lang === 'id' ? 'Rilis:' : 'Date:'} {formatBirthdayDate(birthdayDate, lang === 'id') || (lang === 'id' ? '[Tgl Rilis]' : 'MM-DD')}</div>
                                 </div>
                               </div>
@@ -933,7 +933,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
                                   {lang === 'id' ? 'Salam Hangat,' : 'Warmest Greetings,'}
                                 </span>
                                 <span className="text-[10px] text-slate-930 font-serif italic tracking-wide font-extrabold block mt-0.5">
-                                  {isAnonymous ? (lang === 'id' ? 'Sahabat Misterius Anda 🤫' : 'Your Anonymous Friend 🤫') : user.displayName}
+                                  {isAnonymous ? (lang === 'id' ? 'Sahabat Misterius Anda' : 'Your Anonymous Friend') : user.displayName}
                                 </span>
                               </div>
                             </div>
@@ -989,7 +989,7 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en' }: Dashbo
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
                         : "bg-amber-500/10 text-[#D4AF37] border-[#D4AF37]/20"
                     }`}>
-                      {isUnlocked ? (lang === 'id' ? "Terbuka 🔓" : "Unlocked 🔓") : (lang === 'id' ? "Terkunci 🔒" : "Time Locked 🔒")}
+                      {isUnlocked ? (lang === 'id' ? "Terbuka" : "Unlocked") : (lang === 'id' ? "Terkunci" : "Time Locked")}
                     </span>
                   </div>
 

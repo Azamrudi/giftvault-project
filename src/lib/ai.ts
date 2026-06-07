@@ -13,7 +13,7 @@ export async function generateAIWish(params: {
   });
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err.error || "Failed to generate AI greeting.");
+    throw new Error(err.error || "Failed to generate greeting.");
   }
   return response.json() as Promise<{ text: string }>;
 }

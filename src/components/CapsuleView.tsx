@@ -65,9 +65,9 @@ export const ENVELOPE_THEME_STYLES: { [key: string]: {
     descColor: "text-indigo-200/85",
     decorations: (
       <>
-        <div className="absolute top-4 left-10 text-indigo-400 text-sm animate-bounce font-mono">✦</div>
-        <div className="absolute bottom-6 right-12 text-purple-300 text-lg animate-pulse font-mono">★</div>
-        <div className="absolute top-1/2 right-4 text-indigo-300 text-xs animate-bounce font-mono" style={{ animationDelay: '1s' }}>✦</div>
+        <div className="absolute top-4 left-10 w-2.5 h-2.5 rounded-full bg-indigo-400 opacity-70 animate-pulse" />
+        <div className="absolute bottom-6 right-12 w-3 h-3 rounded-full bg-purple-300 opacity-70 animate-bounce" />
+        <div className="absolute top-1/2 right-4 w-1.5 h-1.5 rounded-full bg-indigo-300 opacity-70 animate-pulse" style={{ animationDelay: '1s' }} />
         <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
           <div className="w-64 h-64 border border-indigo-400 rounded-full absolute -top-12 -left-12 animate-spin" style={{ animationDuration: '40s' }} />
         </div>
@@ -84,10 +84,10 @@ export const ENVELOPE_THEME_STYLES: { [key: string]: {
     descColor: "text-rose-100",
     decorations: (
       <>
-        <div className="absolute top-5 right-10 text-rose-200 text-lg animate-pulse">🌸</div>
-        <div className="absolute bottom-5 left-10 text-rose-200 text-lg animate-ping" style={{ animationDuration: '4s' }}>♥</div>
-        <div className="absolute top-1/2 left-4 text-rose-101 text-base animate-bounce">✿</div>
-        <div className="absolute bottom-12 right-6 text-rose-200 text-xs opacity-60">❥</div>
+        <div className="absolute top-5 right-10 w-3 h-3 rounded-full bg-rose-200 opacity-60 animate-pulse" />
+        <div className="absolute bottom-5 left-10 w-3 h-3 rounded-full bg-rose-200 opacity-55 animate-ping" style={{ animationDuration: '4s' }} />
+        <div className="absolute top-1/2 left-4 w-2 h-2 rounded-full bg-rose-100 opacity-60 animate-bounce" />
+        <div className="absolute bottom-12 right-6 w-1.5 h-1.5 rounded-full bg-rose-200 opacity-60" />
       </>
     )
   },
@@ -101,10 +101,10 @@ export const ENVELOPE_THEME_STYLES: { [key: string]: {
     descColor: "text-purple-800/85",
     decorations: (
       <>
-        <div className="absolute top-5 left-6 text-xl animate-pulse">✨</div>
-        <div className="absolute bottom-6 left-12 text-xl animate-bounce" style={{ animationDuration: '1.2s' }}>🧸</div>
-        <div className="absolute top-12 right-8 text-xl animate-bounce" style={{ animationDuration: '2.2s' }}>🍭</div>
-        <div className="absolute bottom-4 right-10 text-xl animate-spin" style={{ animationDuration: '10s' }}>⭐</div>
+        <div className="absolute top-5 left-6 w-3 h-3 rounded-full bg-white opacity-65 animate-pulse" />
+        <div className="absolute bottom-6 left-12 w-3 h-3 rounded-full bg-[#FBCFE8] opacity-70 animate-bounce" style={{ animationDuration: '1.2s' }} />
+        <div className="absolute top-12 right-8 w-3 h-3 rounded-full bg-[#C4B5FD] opacity-70 animate-bounce" style={{ animationDuration: '2.2s' }} />
+        <div className="absolute bottom-4 right-10 w-4 h-1 rounded-full bg-[#F9A8D4] opacity-70 animate-pulse" style={{ animationDuration: '10s' }} />
       </>
     )
   },
@@ -141,7 +141,7 @@ const TRANSLATIONS = {
     enterPasscode: "ENTER SECRET VAULT PIN",
     decryptBtn: "Decrypt Time Capsule",
     byDeepmind: "SECURE SECRETS ENGINE BY DEEPMIND",
-    timeSealed: "Time Sealed Time Capsule 🔒",
+    timeSealed: "Time Sealed Time Capsule",
     surpriseWaiting: "Surprise waiting for {name}!",
     unfoldAuto: "The envelope unfolds automatically on birthday midnight. Leave friend memory snippets below while counting down!",
     days: "Days",
@@ -167,7 +167,7 @@ const TRANSLATIONS = {
     guestNamePlaceholder: "Your Guest Name",
     guestMsgPlaceholder: "Write your wishes on the giant wall greeting cards...",
     postToWall: "Post to Wall",
-    guestbookLocked: "🔒 The guestbook wishes feed unlocks automatically once the countdown has reached midnight!",
+    guestbookLocked: "The guestbook wishes feed unlocks automatically once the countdown has reached midnight!",
     noGuestbook: "No guestbook greeting posted yet. Leave an entry when the portal unlocks!"
   },
   id: {
@@ -183,7 +183,7 @@ const TRANSLATIONS = {
     enterPasscode: "MASUKKAN PIN SURAT",
     decryptBtn: "Buka Brankas Kapsul",
     byDeepmind: "SISTEM BRANKAS AMAN OLEH DEEPMIND",
-    timeSealed: "Kapsul Terkunci Waktu 🔒",
+    timeSealed: "Kapsul Terkunci Waktu",
     surpriseWaiting: "Kejutan menanti {name}!",
     unfoldAuto: "Amplop surat akan terbuka otomatis saat hari rilis tiba. Anda juga dapat meninggalkan kenangan indah di bawah selagi menunggu!",
     days: "Hari",
@@ -209,7 +209,7 @@ const TRANSLATIONS = {
     guestNamePlaceholder: "Nama Anda",
     guestMsgPlaceholder: "Tulis doa terbaik Anda pada lembaran papan kartu ucapan perayaan...",
     postToWall: "Kirim ke Buku Tamu",
-    guestbookLocked: "🔒 Kolom buku tamu ucapan akan terbuka otomatis jika penghitungan waktu mundur telah selesai!",
+    guestbookLocked: "Kolom buku tamu ucapan akan terbuka otomatis jika penghitungan waktu mundur telah selesai!",
     noGuestbook: "Belum ada ucapan tertulis di buku tamu. Berikan ucapan saat portal perayaan terbuka!"
   }
 };
@@ -788,7 +788,7 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
                   </motion.div>
                   
                   <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mt-4">
-                    🎉 {lang === 'id' ? 'Selamat Ulang Tahun' : 'Happy Birthday'} <br className="sm:hidden" />
+                    {lang === 'id' ? 'Selamat Ulang Tahun' : 'Happy Birthday'} <br className="sm:hidden" />
                     <span className="text-indigo-600"> {capsule.recipientName}!</span>
                   </h1>
                 </div>
@@ -814,7 +814,7 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
                             {envStyle.decorations}
 
                             <div className="absolute top-4 left-4 bg-black/20 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 text-[10px] uppercase font-bold tracking-widest text-white font-mono">
-                              {lang === 'id' ? 'KARTU UCAPAN RAHASIA 💌' : 'SECRET CELEBRATION CARD 💌'}
+                              {lang === 'id' ? 'KARTU UCAPAN RAHASIA' : 'SECRET CELEBRATION CARD'}
                             </div>
 
                             {/* Interactive Wax Seal lock */}
@@ -824,7 +824,7 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
 
                             <h3 className={`mt-6 text-xl font-extrabold ${envStyle.titleColor}`}>{t.openEnvelope}</h3>
                             <p className={`text-xs ${envStyle.descColor} mt-2 max-w-xs leading-relaxed font-semibold`}>
-                              {t.clickWaxSeal.replace('{name}', capsule.isAnonymous ? (lang === 'id' ? 'Pengirim Misterius 🤫' : 'Anonymous Sender 🤫') : capsule.creatorName)}
+                              {t.clickWaxSeal.replace('{name}', capsule.isAnonymous ? (lang === 'id' ? 'Pengirim Misterius' : 'Anonymous Sender') : capsule.creatorName)}
                             </p>
                           </motion.div>
                         );
@@ -852,7 +852,7 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
                             </h2>
                           </div>
                           <div className="text-right text-xs font-sans font-medium text-slate-500">
-                            <div>{t.from} {capsule.isAnonymous ? (lang === 'id' ? 'Sahabat Misterius Anda 🤫' : 'Your Anonymous Friend 🤫') : capsule.creatorName}</div>
+                            <div>{t.from} {capsule.isAnonymous ? (lang === 'id' ? 'Sahabat Misterius Anda' : 'Your Anonymous Friend') : capsule.creatorName}</div>
                             <div>{t.date} {formatBirthdayDate(capsule.birthdayDate, lang === 'id')}</div>
                           </div>
                         </div>
@@ -871,7 +871,7 @@ export default function CapsuleView({ capsuleId, onBackToHome, preview = false, 
                             {t.warmestGreetings}
                           </span>
                           <span className="text-bold text-slate-950 font-serif text-lg tracking-wide italic mt-1 block">
-                            {capsule.isAnonymous ? (lang === 'id' ? 'Sahabat Misterius Anda 🤫' : 'Your Anonymous Friend 🤫') : capsule.creatorName}
+                            {capsule.isAnonymous ? (lang === 'id' ? 'Sahabat Misterius Anda' : 'Your Anonymous Friend') : capsule.creatorName}
                           </span>
                         </div>
                       </motion.div>
