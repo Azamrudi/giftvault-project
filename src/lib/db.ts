@@ -40,7 +40,8 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
 export async function createBirthdayPage(page: BirthdayPage): Promise<void> {
   const path = `birthdayPages/${page.id}`;
   try {
-    await setDoc(doc(db, 'birthdayPages', page.id), page);
+    const serializablePage = JSON.parse(JSON.stringify(page));
+    await setDoc(doc(db, 'birthdayPages', page.id), serializablePage);
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, path);
   }

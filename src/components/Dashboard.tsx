@@ -469,7 +469,8 @@ export default function Dashboard({ user, onSelectCapsule, lang = 'en', themeMod
       await loadCapsules();
     } catch (err) {
       console.error("Error creating birthday page:", err);
-      alert("Database serialization error. Confirm authorization variables.");
+      const message = err instanceof Error ? err.message : String(err);
+      alert(`Database serialization error. Confirm authorization variables.\n\n${message}`);
     } finally {
       setFormSubmitting(false);
     }
